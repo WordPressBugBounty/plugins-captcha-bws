@@ -6,7 +6,7 @@ Description: #1 super security anti-spam captcha plugin for WordPress forms.
 Author: BestWebSoft
 Text Domain: captcha-bws
 Domain Path: /languages
-Version: 5.2.4
+Version: 5.2.5
 Author URI: https://bestwebsoft.com/
 License: GPLv2 or later
  */
@@ -120,6 +120,16 @@ if ( ! function_exists( 'cptch_plugins_loaded' ) ) {
 	function cptch_plugins_loaded() {
 		/* Internationalization */
 		load_plugin_textdomain( 'captcha-bws', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+
+		if ( ! function_exists( 'get_plugin_data' ) ) {
+			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+		}
+		$user_loggged_in = is_user_logged_in();
+		if ( ( is_plugin_active( 'formidable/formidable.php' ) || is_plugin_active( 'formidable-pro/formidable-pro.php' ) ) && cptch_captcha_is_needed( 'frm_contact_form', $user_loggged_in ) ) {
+			require_once( dirname( __FILE__ ) . '/includes/captcha-for-formidable.php' );
+		}
+
+
 	}
 }
 
@@ -132,19 +142,19 @@ if ( ! function_exists( 'cptch_init' ) ) {
 
 		require_once( dirname( __FILE__ ) . '/bws_menu/bws_include.php' );
 		bws_include_init( plugin_basename( __FILE__ ) );
+		
+		if ( ! function_exists( 'get_plugin_data' ) ) {
+			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+		}
 
 		if ( is_plugin_active( 'captcha-pro/captcha_pro.php' ) || is_plugin_active( 'captcha-plus/captcha-plus.php' ) ) {
 			$free = 'captcha-bws/captcha-bws.php';
-			include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 			if ( is_plugin_active( $free ) ) {
 				deactivate_plugins( $free );
 			}
 		}
 
-		if ( ! $cptch_plugin_info ) {
-			if ( ! function_exists( 'get_plugin_data' ) ) {
-				require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-			}
+		if ( ! $cptch_plugin_info ) {			
 			$cptch_plugin_info = get_plugin_data( __FILE__ );
 		}
 
@@ -215,6 +225,17 @@ if ( ! function_exists( 'cptch_init' ) ) {
 			add_action( 'lostpassword_form', 'cptch_lostpassword_form' );
 			if ( ! apply_filters( 'cptch_ip_in_allowlist', false ) ) {
 				add_filter( 'allow_password_reset', 'cptch_lostpassword_check' );
+			}
+		}
+
+		/*
+		 * Add the CAPTCHA into the WP lost password form
+		 */
+		if ( $cptch_options['forms']['wp_password_form']['enable'] ) {
+			add_filter( 'the_password_form', 'cptch_password_form_display', 10, 2 );
+			if ( ! apply_filters( 'cptch_ip_in_allowlist', false ) ) {
+				add_filter( 'post_password_expires', 'cptch_password_form_cookie' );
+				add_filter( 'post_password_required', 'cptch_password_form_check', 10, 2 );
 			}
 		}
 
@@ -474,8 +495,14 @@ if ( ! function_exists( 'cptch_page_router' ) ) {
 	 * @see   groups_action_create_group(),
 	 * @since 4.3.1
 	 */
-	function cptch_page_router() { ?>
-		<?php
+	function cptch_page_router() {
+		global $cptch_plugin_info;
+		if ( ! $cptch_plugin_info ) {
+			if ( ! function_exists( 'get_plugin_data' ) ) {
+				require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+			}
+			$cptch_plugin_info = get_plugin_data( __FILE__ );
+		}
 		if ( isset( $_GET['page'] ) && 'captcha.php' == $_GET['page'] ) {
 			if ( ! class_exists( 'Bws_Settings_Tabs' ) ) {
 				require_once( dirname( __FILE__ ) . '/bws_menu/class-bws-settings.php' );
@@ -496,8 +523,8 @@ if ( ! function_exists( 'cptch_page_router' ) ) {
 				</noscript>
 				<?php
 				if ( function_exists( 'bws_plugin_promo_banner' ) ) {
-				echo bws_plugin_promo_banner( $cptch_plugin_info, 'cptch_options', 'captcha-bws', 'https://bestwebsoft.com/products/wordpress/plugins/captcha/?utm_source=wordpress&utm_medium=plugin_banner&utm_campaign=upgrade' );
-			}
+					echo bws_plugin_promo_banner( $cptch_plugin_info, 'cptch_options', 'captcha-bws', 'https://bestwebsoft.com/products/wordpress/plugins/captcha/?utm_source=wordpress&utm_medium=plugin_banner&utm_campaign=upgrade' );
+				}
 				$page->display_content(); ?>
 			</div>
 		<?php } else { ?>
@@ -655,25 +682,29 @@ if ( ! function_exists( 'wpmu_cptch_register_form' ) ) {
 		/* the captcha html - register form */
 		echo '<div class="cptch_block">';
 		if ( '' != $cptch_options['title'] ) {
-			echo '<span class="cptch_title">' . esc_html( $cptch_options['title'] ) . '<span class="required"> ' . esc_attr( $cptch_options['required_symbol'] ) . '</span></span>';
-			if ( ! apply_filters( 'cptch_ip_in_allowlist', false ) ) {
-				if ( is_wp_error( $errors ) ) {
-					$error_codes = $errors->get_error_codes();
-					if ( is_array( $error_codes ) && ! empty( $error_codes ) ) {
-						foreach ( $error_codes as $error_code ) {
-							if ( 'cptch' == substr( $error_code, 0, 5 ) ) {
-								$error_message = $errors->get_error_message( $error_code );
-								echo '<p class="error">' . wp_kses_post( $error_message ) . '</p>';
-							}
+			echo '<span class="cptch_title">' . esc_html( $cptch_options['title'] );
+		}
+		echo '<span class="required"> ' . esc_attr( $cptch_options['required_symbol'] ) . '</span>';
+		if ( '' != $cptch_options['title'] ) {
+			echo '</span>';
+		}
+		if ( ! apply_filters( 'cptch_ip_in_allowlist', false ) ) {
+			if ( is_wp_error( $errors ) ) {
+				$error_codes = $errors->get_error_codes();
+				if ( is_array( $error_codes ) && ! empty( $error_codes ) ) {
+					foreach ( $error_codes as $error_code ) {
+						if ( 'cptch' == substr( $error_code, 0, 5 ) ) {
+							$error_message = $errors->get_error_message( $error_code );
+							echo '<p class="error">' . wp_kses_post( $error_message ) . '</p>';
 						}
 					}
 				}
-				echo cptch_display_captcha( 'wp_register' );
-			} else {
-				do_action( 'cptch_allowlist_message' );
 			}
-			echo '</div><br />';
+			echo cptch_display_captcha( 'wp_register' );
+		} else {
+			do_action( 'cptch_allowlist_message' );
 		}
+		echo '</div><br />';
 	}
 }
 
@@ -719,6 +750,61 @@ if ( ! function_exists( 'cptch_lostpassword_check' ) ) {
 	 */
 	function cptch_lostpassword_check( $allow ) {
 		return cptch_check_custom_form( $allow, 'wp_error', 'wp_lost_password' );
+	}
+}
+
+if ( ! function_exists( 'cptch_password_form_display' ) ) {
+	/**
+	 * Add google captcha to the protected post password form
+	 *
+	 * @param   string $output   Form content.
+	 * @param   object $post     Post object.
+	 * @return  string  $expire   Form content.
+	 */
+	function cptch_password_form_display( $output, $post = null ) {
+		$captcha = cptch_display_captcha_custom( 'wp_password_form', 'cptch_wp_password' ) . '<br />';
+		if ( '' !== $captcha && isset( $_COOKIE['cptch_password_form_errors'] ) ) {
+			$output = str_replace( '</form>', '<div class="error cptch-password-form-error"><p>' . wp_kses_post( wp_unslash( $_COOKIE['cptch_password_form_errors'] ) ) . '</p></div>' . $captcha . '</form>', $output );
+		} else {
+			$output = str_replace( '</form>', $captcha . '</form>', $output );
+		}
+		return $output;
+	}
+}
+
+if ( ! function_exists( 'cptch_password_form_cookie' ) ) {
+	/**
+	 * Add google captcha to the protected post password form
+	 *
+	 * @param   array $expire   Expire time.
+	 * @return  array  $expire   Expire time.
+	 */
+	function cptch_password_form_cookie( $expire ) {
+		if ( isset( $_POST['cptch_number'] ) || isset( $_POST['cptch_result'] ) ) {
+			$cptch_check = cptch_check_custom_form( true, 'string', 'wp_password_form' );
+			if ( is_string( $cptch_check ) ) {
+				setcookie( 'cptch_password_form_errors', $cptch_check, time() + 300, COOKIEPATH, COOKIE_DOMAIN, false );
+			} else {
+				setcookie( 'cptch_password_form_errors', '', -1, COOKIEPATH, COOKIE_DOMAIN, false );
+			}
+		}
+		return $expire;
+	}
+}
+
+if ( ! function_exists( 'cptch_password_form_check' ) ) {
+	/**
+	 * Check google captcha in protected post password form
+	 *
+	 * @param   bool   $required   Flag for required password form.
+	 * @param   object $post       Post object.
+	 * @return  bool    $required   Flag for required password form.
+	 */
+	function cptch_password_form_check( $required, $post ) {
+		if ( isset( $_COOKIE['cptch_password_form_errors'] ) ) {
+			$required = true;
+		}
+		return $required;
 	}
 }
 
@@ -2081,8 +2167,9 @@ if ( ! function_exists( 'cptch_plugin_banner' ) ) {
 		if ( 'plugins.php' == $hook_suffix ) {
 			bws_plugin_banner_to_settings( $cptch_plugin_info, 'cptch_options', 'captcha-bws', 'admin.php?page=captcha.php' );
 			if ( function_exists( 'bws_plugin_banner_to_promo' ) ) {
-    bws_plugin_banner_to_promo( $cptch_plugin_info, 'cptch_options', 'captcha-bws', 'admin.php?page=captcha.php', array( __( 'Test your Captcha settings', 'bestwebsoft' ), __( "Ensure your captcha is correctly configured. Check your settings now!", 'bestwebsoft' ) ) );
-}
+				bws_plugin_banner_to_promo( $cptch_plugin_info, 'cptch_options', 'captcha-bws', 'admin.php?page=captcha.php', array( __( 'Test your Captcha settings', 'bestwebsoft' ), __( "Ensure your captcha is correctly configured. Check your settings now!", 'bestwebsoft' ) ) );
+			}
+
 		}
 		if ( isset( $_GET['page'] ) && 'captcha.php' == $_GET['page'] ) {
 			bws_plugin_suggest_feature_banner( $cptch_plugin_info, 'cptch_options', 'captcha-bws' );
@@ -2100,6 +2187,9 @@ if ( ! function_exists( 'cptch_captcha_is_needed' ) ) {
 	 */
 	function cptch_captcha_is_needed( $form_slug, $user_loggged_in ) {
 		global $cptch_options;
+		if ( empty( $cptch_options ) ) {
+			$cptch_options = is_network_admin() ? get_site_option( 'cptch_options' ) : get_option( 'cptch_options' );
+		}
 
 		return isset( $cptch_options['forms'][ $form_slug ] ) &&
 			$cptch_options['forms'][ $form_slug ]['enable'] &&

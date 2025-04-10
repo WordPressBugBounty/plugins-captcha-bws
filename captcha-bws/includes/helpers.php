@@ -80,8 +80,10 @@ if ( ! function_exists( 'cptch_get_default_forms' ) ) {
 			'wp_register',
 			'wp_lost_password',
 			'wp_comments',
+			'wp_password_form',
 			'bws_contact',
 			'bws_booking',
+			'frm_contact_form',
 		);
 
 		$defaults = apply_filters( 'cptch_get_additional_forms_slugs', $defaults );
@@ -193,6 +195,9 @@ if ( ! function_exists( 'cptch_parse_options' ) ) {
 			'wp_comments'       => array(
 				'enable'                => array( 'cptchpls_comments_form', 'cptch_comments_form' ),
 				'hide_from_registered'  => array( 'cptchpls_hide_register', 'cptch_hide_register' ),
+			),
+			'wp_password_form'  => array(
+				'enable'        => array( 'cptchpls_password_form', 'cptchpls_password_form' ),
 			),
 			'bws_contact'       => array(
 				'enable'        => array( 'cptchpls_contact_form', 'cptch_contact_form' ),
@@ -335,6 +340,7 @@ if ( ! function_exists( 'cptch_get_plugin' ) ) {
 			case 'wp_register':
 			case 'wp_lost_password':
 			case 'wp_comments':
+			case 'wp_lost_password':
 			default:
 				return '';
 			case 'bws_contact':

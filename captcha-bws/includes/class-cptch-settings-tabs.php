@@ -74,9 +74,11 @@ if ( ! class_exists( 'Cptch_Settings_Tabs' ) ) {
 				'wp_login'              => array( 'name' => esc_html__( 'Login form', 'captcha-bws' ) ),
 				'wp_register'           => array( 'name' => esc_html__( 'Registration form', 'captcha-bws' ) ),
 				'wp_lost_password'      => array( 'name' => esc_html__( 'Reset password form', 'captcha-bws' ) ),
+				'wp_password_form'      => array( 'name' => esc_html__( 'Protected post password form', 'captcha-bws' ) ),
 				'wp_comments'           => array( 'name' => esc_html__( 'Comments form', 'captcha-bws' ) ),
 				'bws_contact'           => array( 'name' => 'Contact Form' ),
 				'bws_booking'           => array( 'name' => 'Car Rental V2 Pro' ),
+				'frm_contact_form'      => array( 'name' => 'Formidable Contact Form' ),
 				'bws_subscriber'            => array(
 					'name' => 'Subscriber',
 					'for_pro' => 1,
@@ -205,6 +207,7 @@ if ( ! class_exists( 'Cptch_Settings_Tabs' ) ) {
 						'wp_login',
 						'wp_register',
 						'wp_lost_password',
+						'wp_password_form',
 						'wp_comments',
 					),
 				),
@@ -213,6 +216,7 @@ if ( ! class_exists( 'Cptch_Settings_Tabs' ) ) {
 					'forms' => array(
 						'bws_contact',
 						'bws_booking',
+						'frm_contact_form',
 					),
 				),
 				'other_for_pro' => array(
@@ -1199,9 +1203,10 @@ if ( ! class_exists( 'Cptch_Settings_Tabs' ) ) {
 			 * Default compatible plugins
 			 */
 			$compatible_plugins = array(
-				'bws_contact' => array( 'contact-form-plugin/contact_form.php', 'contact-form-pro/contact_form_pro.php', 'contact-form-plus/contact-form-plus.php' ),
-				'bws_booking' => 'bws-car-rental-pro/bws-car-rental-pro.php',
-				'limit_attempts' => array( 'limit-attempts/limit-attempts.php', 'limit-attempts-pro/limit-attempts-pro.php' ),
+				'bws_contact'      => array( 'contact-form-plugin/contact_form.php', 'contact-form-pro/contact_form_pro.php', 'contact-form-plus/contact-form-plus.php' ),
+				'bws_booking'      => 'bws-car-rental-pro/bws-car-rental-pro.php',
+				'limit_attempts'   => array( 'limit-attempts/limit-attempts.php', 'limit-attempts-pro/limit-attempts-pro.php' ),
+				'frm_contact_form' => array( 'formidable/formidable.php', 'formidable-pro/formidable-pro.php' ),
 			);
 
 			$compatible_plugins = apply_filters( 'cptch_get_additional_plugins', $compatible_plugins );
