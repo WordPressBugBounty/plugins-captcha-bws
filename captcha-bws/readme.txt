@@ -2,9 +2,9 @@
 Contributors: bestwebsoft
 Donate link: https://bestwebsoft.com/donate/
 Tags: captcha, spam protection, security, antispam, captcha WooCommerce, OCR-friendly captcha, Math captcha, WordPress captcha, human verification, security plugin, spam prevention, CAPTCHA plugin, WordPress security, form protection
-Requires at least: 5.6
-Tested up to: 6.7
-Stable tag: 5.2.5
+Requires at least: 6.2
+Tested up to: 6.9
+Stable tag: 5.2.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,6 +46,7 @@ Captcha by BestWebSoft integrates seamlessly with popular plugins and is optimiz
     * Registered users in comments form
 * **Additional Features:**
     * Set captcha submission time limit
+    * Settings for displaying captchas by Weekdays and Hours
     * Refresh captcha option
     * Edit captcha title and notifications
     * Compatible with the latest WordPress version
@@ -93,6 +94,10 @@ All Free features plus:
     * BuddyBoss Registration form
 * **Elementor Pro Integration:**
     * Elementor Contact form
+* **Compatible with BWS Login Register Form:
+    * Login form
+    * Registration form
+    * Forgot Password form
 * **Advanced Features:**
     * Hide captcha for allowed IP addresses
     * Merge IP addresses from [Limit Attempts](https://bestwebsoft.com/products/wordpress/plugins/limit-attempts/?k=c6b924d096b75a288daf0e49a58f93c2) plugin with Captcha Allow List
@@ -101,6 +106,7 @@ All Free features plus:
     * Image packages with hand-drawn digits
     * Add and activate unlimited image packages simultaneously
     * Customize Slide Captcha appearance
+    * Block disposable emails
     * Add custom code via plugin settings page
     * Receive support responses within one business day ([Support Policy](https://bestwebsoft.com/support-policy/))
 
@@ -301,6 +307,15 @@ Please make sure that the problem hasn't been discussed yet on our forum (<https
 
 == Changelog ==
 
+= V5.2.7 - 14.11.2025 =
+* Bugfix : Syntax error has been fixed.
+
+= V5.2.6 - 08.11.2025 =
+* Update : All functionality was updated for WordPress 6.8.2
+* Pro : The Block disposable emails functionality has been added.
+* NEW : The new compatibility with BWS Login Register Form has been added.
+* Update : BWS Panel section was updated.
+
 = V5.2.5 - 10.04.2025 =
 * Update : All functionality was updated for WordPress 6.7
 * NEW : The compatibility with Protected post password form has been added.
@@ -432,6 +447,13 @@ Please make sure that the problem hasn't been discussed yet on our forum (<https
 * NEW : Plugin has been released.
 
 == Upgrade Notice ==
+
+= V5.2.7 =
+* Bugs fixed.
+
+= V5.2.6 =
+* New features added.
+* The compatibility with new WordPress version updated.
 
 = V5.2.5 =
 * New features added.

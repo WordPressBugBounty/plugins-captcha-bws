@@ -49,6 +49,9 @@ if ( ! function_exists( 'cptch_get_default_options' ) ) {
 			'display_settings_notice'       => 1,
 			'suggest_feature_banner'        => 1,
 			'forms'                         => array(),
+			'weekdays'							        => array( 1, 2, 3, 4, 5, 6, 7 ),
+			'all_day'                       => array( 1, 2, 3, 4, 5, 6, 7 ),
+			'hours'                         => array(),
 		);
 
 		$forms = cptch_get_default_forms();
@@ -276,6 +279,7 @@ if ( ! function_exists( 'cptch_get_plugin_status' ) ) {
 			'plugin'        => $plugins,
 			'plugin_info'   => array(),
 		);
+
 		foreach ( (array) $plugins as $plugin ) {
 			if ( array_key_exists( $plugin, $all_plugins ) ) {
 				if ( is_plugin_active( $plugin ) ) {

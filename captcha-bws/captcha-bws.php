@@ -6,7 +6,7 @@ Description: #1 super security anti-spam captcha plugin for WordPress forms.
 Author: BestWebSoft
 Text Domain: captcha-bws
 Domain Path: /languages
-Version: 5.2.5
+Version: 5.2.7
 Author URI: https://bestwebsoft.com/
 License: GPLv2 or later
  */
@@ -271,6 +271,12 @@ if ( ! function_exists( 'cptch_init' ) ) {
 				add_filter( 'cntctfrm_check_form', 'cptch_check_bws_contact_form' );
 				add_filter( 'cntctfrmpr_check_form', 'cptch_check_bws_contact_form' );
 			}
+		}
+
+		/* Add Google Captcha to BWS Login Register */
+		if ( ( isset( $cptch_options['forms']['bws_login_form'] ) && $cptch_options['forms']['bws_login_form']['enable'] ) || ( isset( $cptch_options['forms']['bws_register_form'] ) && $cptch_options['forms']['bws_register_form']['enable'] ) || ( isset( $cptch_options['forms']['bws_forgot_pass_form'] ) && $cptch_options['forms']['bws_forgot_pass_form']['enable'] ) ) {
+			add_filter( 'lgnrgstrfrm_add_field', 'cptch_login_register_forms', 10, 2 );
+			add_filter( 'lgnrgstrfrm_check_field', 'cptch_check_login_register_form', 10 );
 		}
 
 		do_action( 'cptch_add_to_cf7' );
@@ -898,6 +904,31 @@ if ( ! function_exists( 'cptch_check_bws_contact_form' ) ) {
 	}
 }
 
+if ( ! function_exists( 'cptch_login_register_forms' ) ) {
+	/**
+	 * BWS contact form hook
+	 *
+	 * @param  string $content   Form content.
+	 * @param  string $form_slug Form slug.
+	 */
+	function cptch_login_register_forms( $content = '', $form_slug = 'bws_login_register' ) {
+		return ( is_string( $content ) ? $content : '' ) .
+			cptch_display_captcha_custom( $form_slug );
+	}
+}
+
+if ( ! function_exists( 'cptch_check_login_register_form' ) ) {
+	/**
+	 * BWS contact form check
+	 *
+	 * @param  bool $allow Flag for check in contact form.
+	 * @return bool flag
+	 */
+	function cptch_check_login_register_form( $allow ) {
+		return cptch_check_custom_form( true, 'string', 'bws_login_register' );
+	}
+}
+
 if ( ! function_exists( 'cptch_display_captcha_shortcode' ) ) {
 	/**
 	 * Display captcha via shortcode
@@ -1008,12 +1039,25 @@ if ( ! function_exists( 'cptch_check_custom_form' ) ) {
 		if ( empty( $cptch_options ) ) {
 			cptch_settings();
 		}
+
+		$weekdays_flag = true;
+		if ( isset( $cptch_options['weekdays'] ) ) {
+			$week_day = date( 'N' );
+			$hour     = date( 'G' );
+			if ( ! in_array( $week_day, $cptch_options['weekdays'] ) || ( ! in_array( $week_day, $cptch_options['all_day'] ) && ! in_array( $hour, $cptch_options['hours'][ $week_day ] ) ) ) {
+				$weekdays_flag = false;
+			}
+		}
+		if ( false === $weekdays_flag ) {
+			return $allow;
+		}
 		$form_slugs = array(
 			'wp_register'               => 'registration_form_captcha_check',
 			'wp_lost_password'          => 'reset_pwd_form_captcha_check',
 			'wp_comments'               => 'comments_form_captcha_check',
 			'bws_contact'               => 'contact_form_captcha_check',
 			'bws_booking'               => 'booking_form_captcha_check',
+			'bws_login_register'        => 'login_register_form_captcha_check',
 		);
 
 		$form_slugs = apply_filters( 'cptch_get_additional_captcha_form_slugs', $form_slugs );
@@ -1060,7 +1104,6 @@ if ( ! function_exists( 'cptch_check_custom_form' ) ) {
 				return $allow;
 			}
 		} else {
-			
 			/**
 			 * Escaping the form slug before using it in case when the form slug
 			 * was not sended via function parameters or if we use the CAPTCHA in custom forms
@@ -1160,6 +1203,18 @@ if ( ! function_exists( 'cptch_display_captcha' ) ) {
 
 		if ( empty( $cptch_options ) ) {
 			cptch_settings();
+		}
+
+		$weekdays_flag = true;
+		if ( isset( $cptch_options['weekdays'] ) ) {
+			$week_day = date( 'N' );
+			$hour     = date( 'G' );
+			if ( ! in_array( $week_day, $cptch_options['weekdays'] ) || ( ! in_array( $week_day, $cptch_options['all_day'] ) && ! in_array( $hour, $cptch_options['hours'][ $week_day ] ) ) ) {
+				$weekdays_flag = false;
+			}
+		}
+		if ( false === $weekdays_flag ) {
+			return '';
 		}
 
 		/**
@@ -1401,6 +1456,18 @@ if ( ! function_exists( 'cptch_display_captcha_custom' ) ) {
 	 */
 	function cptch_display_captcha_custom( $form_slug = 'general', $class_name = '', $input_name = 'cptch_number' ) {
 		global $cptch_options;
+
+		$weekdays_flag = true;
+		if ( isset( $cptch_options['weekdays'] ) ) {
+			$week_day = date( 'N' );
+			$hour     = date( 'G' );
+			if ( ! in_array( $week_day, $cptch_options['weekdays'] ) || ( ! in_array( $week_day, $cptch_options['all_day'] ) && ! in_array( $hour, $cptch_options['hours'][ $week_day ] ) ) ) {
+				$weekdays_flag = false;
+			}
+		}
+		if ( false === $weekdays_flag ) {
+			return '';
+		}
 
 		if ( empty( $class_name ) ) {
 			$label     = '';
@@ -2243,7 +2310,19 @@ if ( ! function_exists( 'cptch_check_slide_captcha_response' ) ) {
 	 * @return bool   Flag for results.
 	 */
 	function cptch_check_slide_captcha_response( $response ) {
-		global $wpdb;
+		global $wpdb, $cptch_options;
+
+		$weekdays_flag = true;
+		if ( isset( $cptch_options['weekdays'] ) ) {
+			$week_day = date( 'N' );
+			$hour     = date( 'G' );
+			if ( ! in_array( $week_day, $cptch_options['weekdays'] ) || ( ! in_array( $week_day, $cptch_options['all_day'] ) && ! in_array( $hour, $cptch_options['hours'][ $week_day ] ) ) ) {
+				$weekdays_flag = false;
+			}
+		}
+		if ( false === $weekdays_flag ) {
+			return true;
+		}
 
 		$allow = false;
 		$expiration_duration  = 55;
