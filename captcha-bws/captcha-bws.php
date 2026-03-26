@@ -6,7 +6,7 @@ Description: #1 super security anti-spam captcha plugin for WordPress forms.
 Author: BestWebSoft
 Text Domain: captcha-bws
 Domain Path: /languages
-Version: 5.2.7
+Version: 5.2.8
 Author URI: https://bestwebsoft.com/
 License: GPLv2 or later
  */
@@ -278,6 +278,9 @@ if ( ! function_exists( 'cptch_init' ) ) {
 			add_filter( 'lgnrgstrfrm_add_field', 'cptch_login_register_forms', 10, 2 );
 			add_filter( 'lgnrgstrfrm_check_field', 'cptch_check_login_register_form', 10 );
 		}
+
+		/* Add Force Strong Passwords to login/register forms */
+		add_action( 'validate_password_reset', 'cptch_validate_password_reset_form', 10, 2 );
 
 		do_action( 'cptch_add_to_cf7' );
 	}
@@ -926,6 +929,43 @@ if ( ! function_exists( 'cptch_check_login_register_form' ) ) {
 	 */
 	function cptch_check_login_register_form( $allow ) {
 		return cptch_check_custom_form( true, 'string', 'bws_login_register' );
+	}
+}
+
+if ( ! function_exists( 'cptch_validate_password_reset_form' ) ) {
+	function cptch_validate_password_reset_form( $errors, $user ) {
+		if ( isset( $_POST['pass1'] ) && ! empty( $_POST['pass1'] ) ) {
+
+			global $cptch_options;
+
+			if ( empty( $cptch_options ) ) {
+				$cptch_options = get_option( 'cptch_options' );
+			}
+
+			$result = cptch_validate_password( $_POST['pass1'] );
+			if ( false === $result ) {
+				$errors->add( 'cptch_error', str_replace( '{min_length}', $cptch_options['fsp_length'], $cptch_options['fsp_error_message'] ) );
+			}
+		}
+
+		return $errors;
+	}
+}
+
+if ( ! function_exists( 'cptch_validate_password' ) ) {
+	function cptch_validate_password( $password ) {
+		global $cptch_options;
+
+		if ( empty( $cptch_options ) ) {
+			$cptch_options = get_option( 'cptch_options' );
+		}  
+	
+		$pattern = '/^[a-zA-Z\d\!\@\#\$\%\^\&\*\(\)\-\_\[\]\{\}\<\>\~\`\+\=\,\.\;\:\/\?\|\'\"\\\\]{' . $cptch_options['fsp_length'] . ',25}$/';
+	
+		if ( strlen( $password ) < $cptch_options['fsp_length'] || ! preg_match( $pattern, $password ) ) {
+			return false;
+		}
+		return true;
 	}
 }
 
@@ -2135,7 +2175,7 @@ if ( ! function_exists( 'cptch_admin_head' ) ) {
 
 			wp_enqueue_style( 'cptch_stylesheet', plugins_url( 'css/style.css', __FILE__ ), array(), $cptch_plugin_info['Version'] );
 
-			wp_enqueue_script( 'cptch_script', plugins_url( 'js/script.js', __FILE__ ), array( 'jquery', 'jquery-ui-resizable', 'jquery-ui-tabs', 'wp-color-picker' ), $cptch_plugin_info['Version'], true );
+			wp_enqueue_script( 'cptch_script', plugins_url( 'js/script.js', __FILE__ ), array( 'jquery', 'jquery-ui-resizable', 'jquery-ui-tabs', 'wp-color-picker' ), $cptch_plugin_info['Version'] . '.2', true );
 			wp_enqueue_style( 'wp-color-picker' );
 			if ( 'captcha.php' == $_REQUEST['page'] ) {
 				bws_enqueue_settings_scripts();

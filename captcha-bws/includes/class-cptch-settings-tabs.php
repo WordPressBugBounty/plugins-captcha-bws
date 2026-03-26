@@ -163,6 +163,18 @@ if ( ! class_exists( 'Cptch_Settings_Tabs' ) ) {
 					'name' => esc_html__( 'wpForo Reply form', 'captcha-bws' ),
 					'for_pro' => 1,
 				),
+				'edd_login_form'         => array(
+					'name' => esc_html__( 'Easy Digital Downloads Login Form', 'captcha-pro' ),
+					'for_pro' => 1,
+				),
+				'edd_register_form'         => array(
+					'name' => esc_html__( 'Easy Digital Downloads Registration Form', 'captcha-pro' ),
+					'for_pro' => 1,
+				),
+				'edd_lost_password_form'         => array(
+					'name' => esc_html__( 'Easy Digital Downloads Lost Password Form', 'captcha-pro' ),
+					'for_pro' => 1,
+				),
 				'learndash_login_form'        => array( 'name' => __( 'LearnDash login form', 'captcha-pro' ) ),
 				'learndash_registration_form' => array( 'name' => __( 'LearnDash registration form', 'captcha-pro' ) ),
 				'bboss_registration_form'     => array( 'name' => __( 'BuddyBoss registration form', 'captcha-pro' ) ),
@@ -290,6 +302,14 @@ if ( ! class_exists( 'Cptch_Settings_Tabs' ) ) {
 							'bboss_registration_form',
 						),
 					),
+					'edd_forms' => array(
+						'title'  => 'Easy Digital Downloads',
+						'forms' => array(
+							'edd_login_form',
+							'edd_register_form',
+							'edd_lost_password_form',
+						),
+					),
 				),
 			);
 			$this->form_categories['external'] = apply_filters( 'cptch_get_additional_forms_slugs', $this->form_categories['external'] );
@@ -307,7 +327,8 @@ if ( ! class_exists( 'Cptch_Settings_Tabs' ) ) {
 				$this->form_categories['other_for_pro']['bbpress']['forms'],
 				$this->form_categories['other_for_pro']['wpforo']['forms'],
 				$this->form_categories['other_for_pro']['learndash']['forms'],
-				$this->form_categories['other_for_pro']['bboss']['forms']
+				$this->form_categories['other_for_pro']['bboss']['forms'],
+				$this->form_categories['other_for_pro']['edd_forms']['forms']
 			);
 
 			$user_forms = array_diff( array_keys( $this->forms ), $this->registered_forms );
@@ -400,6 +421,12 @@ if ( ! class_exists( 'Cptch_Settings_Tabs' ) ) {
 			$this->options['forms']['general']['used_packages'] = $this->options['used_packages'];
 			$this->options['images_count']  = isset( $_REQUEST['cptch_images_count'] ) ? absint( $_REQUEST['cptch_images_count'] ) : 4;
 			$this->options['forms']['general']['time_limit']    = isset( $_REQUEST['cptch_time_limit'] ) ? absint( $_REQUEST['cptch_time_limit'] ) : 120;
+
+			/* Force Strong Passwords */
+			$this->options['fsp_enable'] = isset( $_POST['cptch_force_strong_passwords'] ) ? 1 : 0;
+			$this->options['fsp_length'] = isset( $_POST['cptch_fsp_length'] ) && 12 <= intval( $_POST['cptch_fsp_length'] ) ? intval( $_POST['cptch_fsp_length'] ) : 12;
+			$this->options['fsp_error_message'] = isset( $_POST['cptch_fsp_error_message'] ) ? sanitize_text_field( wp_unslash( $_POST['cptch_fsp_error_message'] ) ) : __( 'Password must be at least {min_length} characters long and include uppercase and lowercase letters and numbers.', 'captcha-bws' );
+
 
 			/*
 			 * Prepare forms options
@@ -816,6 +843,33 @@ if ( ! class_exists( 'Cptch_Settings_Tabs' ) ) {
 								?>
 							</tr>
 						</table>
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><?php esc_html_e( 'Force Strong Passwords (FSP)', 'captcha-bws' ); ?></th>
+					<td>
+						<input<?php echo wp_kses_post( $this->change_permission_attr ); ?> id="cptch_force_strong_passwords" type="checkbox" <?php checked( isset( $this->options['fsp_enable'] ) && 1 === $this->options['fsp_enable'] ); ?> name="cptch_force_strong_passwords" value="1" />
+						<span class="bws_info">
+							<?php esc_html_e( 'Requires passwords to include uppercase and lowercase letters and numbers, with a minimum length. Applies only to the default WordPress registration form.', 'captcha-bws' ); ?>
+						</span>
+					</td>
+				</tr>
+				<tr class="cptch_fsp" valign="top">
+					<th scope="row"><?php esc_html_e( 'Minimum Password Length', 'captcha-bws' ); ?></th>
+					<td>
+						<input<?php echo wp_kses_post( $this->change_permission_attr ); ?> class="small-text" type="number" name="cptch_fsp_length" value="<?php echo intval( $this->options['fsp_length'] ); ?>" min="12" max="25" step="1" />
+						<span class="bws_info">
+							<?php esc_html_e( 'Set the minimum number of characters required for a password.', 'captcha-bws' ); ?>
+						</span>
+					</td>
+				</tr>
+				<tr class="cptch_fsp" valign="top">
+					<th scope="row"><?php esc_html_e( 'Password Error Message', 'captcha-bws' ); ?></th>
+					<td>
+						<textarea name="cptch_fsp_error_message"><?php echo esc_html( $this->options['fsp_error_message'] ); ?></textarea><br />
+						<span class="bws_info">
+							<?php esc_html_e( 'Use the following shortcode in your message', 'captcha-bws' ); ?>: <code>{min_length}</code>
+						</span>
 					</td>
 				</tr>
 			</table>

@@ -3,8 +3,8 @@ Contributors: bestwebsoft
 Donate link: https://bestwebsoft.com/donate/
 Tags: captcha, spam protection, security, antispam, captcha WooCommerce, OCR-friendly captcha, Math captcha, WordPress captcha, human verification, security plugin, spam prevention, CAPTCHA plugin, WordPress security, form protection
 Requires at least: 6.2
-Tested up to: 6.9
-Stable tag: 5.2.7
+Tested up to: 6.9.4
+Stable tag: 5.2.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,7 +24,7 @@ Captcha by BestWebSoft integrates seamlessly with popular plugins and is optimiz
 
 = Free Features =
 
-* **Add Captcha to:**
+* Add captcha to:
     * Login form
     * Registration form
     * Reset password form
@@ -32,83 +32,89 @@ Captcha by BestWebSoft integrates seamlessly with popular plugins and is optimiz
     * Protected post password form
     * [Contact Form](https://bestwebsoft.com/products/wordpress/plugins/contact-form/?k=7f973058ee3bd3a18934b5e13b857d6f)
     * [Car Rental V2 Pro](https://bestwebsoft.com/products/wordpress/plugins/car-rental-v2/?k=9feda3ea8564e0b0707c5434786ddf24)
-    * Custom forms
-* **Choose Captcha Type:**
-    * Invisible Captcha
-    * Character Recognition Captcha
-    * Math Captcha (simple math operations like addition, subtraction, multiplication)
-    * Slide Captcha
-* **Enhance Captcha Protection with:**
+    * Custom form
+* Choose Captcha type:
+    * Invisible
+    * Character Recognition
+    * Simple math actions such as addition, subtraction, and multiplication
+    * Slide captcha
+* Enhance captcha protection with:
     * Letters
     * Numbers
     * Images
-* **Hide Captcha for:**
+* Hide captcha for:
     * Registered users in comments form
-* **Additional Features:**
-    * Set captcha submission time limit
-    * Settings for displaying captchas by Weekdays and Hours
-    * Refresh captcha option
-    * Edit captcha title and notifications
-    * Compatible with the latest WordPress version
-    * User-friendly settings for quick setup without coding
-    * Comprehensive documentation and tutorial videos
-    * Multilingual and RTL ready
+* Set captcha submission time limit
+* Settings for displaying captchas by Weekdays and Hours
+* Refresh captcha option
+* Edit captcha title and notifications
+* Compatible with latest WordPress version
+* Incredibly simple settings for fast setup without modifying code
+* Detailed step-by-step documentations and videos
+* Multilingual and RTL ready
+* Force Strong Passwords
 
-## Pro Features
-
-All Free features plus:
-
-* **Enhanced Compatibility:**
-    * Contact Form 7 (since v3.4)
-    * [Subscriber](https://bestwebsoft.com/products/wordpress/plugins/subscriber/?k=ac02c12d6e17bc91f4cc636eec0a0348)
-    * Jetpack Contact Form
-    * MailChimp for WordPress
-    * Ninja Forms
-    * Gravity Forms
-    * WPForms
-    * Caldera Forms
-    * Formidable Contact Form
-    * MemberPress
-* **WooCommerce Integration:**
-    * Login form
-    * Register form
-    * Lost password form
-    * Checkout billing form
-* **bbPress Integration:**
-    * New Topic form
-    * Reply form
-* **BuddyPress Integration:**
-    * Registration form
-    * Comments form
-    * Create a Group form
-* **wpForo Integration:**
-    * Login form
-    * Registration form
-    * New Topic form
-    * Reply form
-* **Divi Integration:**
-    * Contact Form
-    * Login Form
-* **LearnDash and BuddyBoss Integration:**
-    * LearnDash Login and Registration forms
-    * BuddyBoss Registration form
-* **Elementor Pro Integration:**
-    * Elementor Contact form
-* **Compatible with BWS Login Register Form:
-    * Login form
-    * Registration form
-    * Forgot Password form
-* **Advanced Features:**
-    * Hide captcha for allowed IP addresses
-    * Merge IP addresses from [Limit Attempts](https://bestwebsoft.com/products/wordpress/plugins/limit-attempts/?k=c6b924d096b75a288daf0e49a58f93c2) plugin with Captcha Allow List
-    * Configure all subsites on the network
-    * Set captcha submission time limits for individual forms
-    * Image packages with hand-drawn digits
-    * Add and activate unlimited image packages simultaneously
-    * Customize Slide Captcha appearance
-    * Block disposable emails
-    * Add custom code via plugin settings page
-    * Receive support responses within one business day ([Support Policy](https://bestwebsoft.com/support-policy/))
+> **Pro Features**
+>
+> All features from Free version included plus:
+>
+> * Compatible with :
+>   * Contact Form 7 (since v 3.4)
+>   * [Subscriber](https://bestwebsoft.com/products/wordpress/plugins/subscriber/?k=ac02c12d6e17bc91f4cc636eec0a0348)
+>   * Jetpack contact form
+>   * MailChimp for WordPress
+>   * Ninja Forms
+>   * Gravity Forms
+>   * WPForms
+>   * Caldera Forms
+>   * Formidable Contact Form
+>   * MemberPress
+> * Compatible with WooCommerce:
+>   * Login form
+>   * Register form
+>   * Lost password form
+>   * Checkout billing form
+> * Compatible with bbPress:
+>   * New Topic form
+>   * Reply form
+> * Compatible with BuddyPress:
+>   * Registration form
+>   * Comments form
+>   * Create a Group form
+> * Compatible with Forums - wpForo:
+>   * Login form
+>   * Registration form
+>   * New Topic form
+>   * Reply form
+> * Compatible with Divi :
+>   * Contact Form
+>   * Login Form
+> * Compatible with LearnDash login:
+>   * Login form
+>   * Registration form
+> * Compatible with BuddyBoss:
+>   * Registration form
+> * Compatible with Elementor Pro:
+>   * Elementor Contact form [NEW]
+> * Compatible with BWS Login Register Form:
+>   * Login form
+>   * Registration form
+>   * Forgot Password form
+> * Compatible with Easy Digital Downloads Form:
+>   * Login form
+>   * Registration form
+>   * Forgot Password form
+> * Hide captcha for:
+>   * Allowed IP addresses
+> * Merge IP addresses from [Limit Attempts](https://bestwebsoft.com/products/wordpress/plugins/limit-attempts/?k=a9ab60b2d4016ae9c809733d84012988) plugin with Captcha Allow List
+> * Configure all subsites on the network
+> * Captcha submission time limit for separate forms
+> * Image packages with hand-drawn digits
+> * Add and enable unlimited number of image packages at the same time
+> * Edit Slide captcha appearance
+> * Block disposable emails
+> * Add custom code via plugin settings page
+> * Get answer to your support question within one business day ([Support Policy](https://bestwebsoft.com/support-policy/))
 
 [**Upgrade to Pro Now**](https://bestwebsoft.com/products/wordpress/plugins/captcha/?k=2d2d85a3c277bf3489697c9a9ff2d352)
 
@@ -307,6 +313,12 @@ Please make sure that the problem hasn't been discussed yet on our forum (<https
 
 == Changelog ==
 
+= V5.2.8 - 20.03.2026 =
+* Update : All functionality was updated for WordPress 6.9.4
+* NEW : The new functionality Force Strong Passwords has been added.
+* PRO : The new compatibility with Easy Digital Downloads Forms has been added.
+* Update : BWS Panel section was updated.
+
 = V5.2.7 - 14.11.2025 =
 * Bugfix : Syntax error has been fixed.
 
@@ -447,6 +459,10 @@ Please make sure that the problem hasn't been discussed yet on our forum (<https
 * NEW : Plugin has been released.
 
 == Upgrade Notice ==
+
+= V5.2.8 =
+* New features added.
+* The compatibility with new WordPress version updated.
 
 = V5.2.7 =
 * Bugs fixed.

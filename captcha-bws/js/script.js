@@ -135,5 +135,13 @@
 				$( this ).parent().parent().parent().next().children().eq( parseInt( $( this ).val() ) - 1 ).children().addClass( 'hidden' );
 			}
 		} );
+
+		$( '#cptch_force_strong_passwords' ).change( function() {
+			if ( $( this ).is( ':checked' ) ) {
+				$( '.cptch_fsp' ).show();
+			} else {
+				$( '.cptch_fsp' ).hide();
+			}
+		} ).trigger( 'change' );
 	} );
 } )( jQuery );
