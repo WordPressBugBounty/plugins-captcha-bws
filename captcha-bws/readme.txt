@@ -2,9 +2,9 @@
 Contributors: bestwebsoft
 Donate link: https://bestwebsoft.com/donate/
 Tags: captcha, spam protection, security, antispam, captcha WooCommerce, OCR-friendly captcha, Math captcha, WordPress captcha, human verification, security plugin, spam prevention, CAPTCHA plugin, WordPress security, form protection
-Requires at least: 6.2
-Tested up to: 6.9.4
-Stable tag: 5.2.8
+Requires at least: 6.5
+Tested up to: 7.1.3
+Stable tag: 5.2.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -311,7 +311,10 @@ Please make sure that the problem hasn't been discussed yet on our forum (<https
 
 == Changelog ==
 
-== Changelog ==
+= V5.2.9 - 15.10.2026 =
+* Update : All functionality was updated for WordPress 7.1.3
+* Bugfix : Vulnerability has been fixed.
+* Update : BWS Panel section was updated.
 
 = V5.2.8 - 20.03.2026 =
 * Update : All functionality was updated for WordPress 6.9.4
@@ -459,6 +462,10 @@ Please make sure that the problem hasn't been discussed yet on our forum (<https
 * NEW : Plugin has been released.
 
 == Upgrade Notice ==
+
+= V5.2.9 =
+* Plugin optimization completed.
+* The compatibility with new WordPress version updated.
 
 = V5.2.8 =
 * New features added.
