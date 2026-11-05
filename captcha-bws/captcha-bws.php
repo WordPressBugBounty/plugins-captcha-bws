@@ -6,7 +6,7 @@ Description: #1 super security anti-spam captcha plugin for WordPress forms.
 Author: BestWebSoft
 Text Domain: captcha-bws
 Domain Path: /languages
-Version: 5.2.9
+Version: 5.3.1
 Author URI: https://bestwebsoft.com/
 License: GPLv2 or later
  */
@@ -1161,11 +1161,16 @@ if ( ! function_exists( 'cptch_check_custom_form' ) ) {
 				$cptch_time   = sanitize_text_field( wp_unslash( $_SESSION[ $form_slug . '_cptch_time' ] ) );
 				$cptch_result = sanitize_text_field( wp_unslash( $_SESSION[ $form_slug . '_cptch_result' ] ) );
 			} else {
-				if ( defined( 'WP_CACHE' ) && true === WP_CACHE ) {
-					$cptch_time = get_transient( 'cptch_time' );
-					set_transient( 'cptch_time', '', 1 );
-					if ( false === $cptch_time ) {					
-						$error_code = 'time_limit_off';
+				if ( defined( 'WP_CACHE' ) && true === WP_CACHE && 'slide' !== $cptch_options['type'] ) {
+					$cptch_result = isset( $_REQUEST['cptch_result'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cptch_result'] ) ) : null;
+					$key = 'cptch_time_' . md5( $cptch_result );
+					$cptch_time = get_transient( $key );
+					
+					if ( false === $cptch_time ) {
+						$error_code = 'wrong_answer';
+					}
+					if ( 1 != $cptch_options['forms']['general']['enable_time_limit'] ) {
+						delete_transient( $key );
 					}
 				} else {
 					$cptch_time   = isset( $_REQUEST['cptch_time'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cptch_time'] ) ) : null;
@@ -1183,7 +1188,7 @@ if ( ! function_exists( 'cptch_check_custom_form' ) ) {
 				}
 			} elseif ( empty( $error_code ) ) {
 				/* The time limit is exhausted */
-				if ( cptch_limit_exhausted( $form_slug ) ) {
+				if ( 1 == $cptch_options['forms']['general']['enable_time_limit'] && cptch_limit_exhausted( $form_slug ) ) {
 					$error_code = 'time_limit_off';
 					/* Not enough data to verify the CAPTCHA answer */
 				} elseif (
@@ -1481,8 +1486,9 @@ if ( ! function_exists( 'cptch_display_captcha' ) ) {
 			}
 			$captcha_content .= '<input type="hidden" name="cptch_time" value="' . $time . '" />';
 			if ( defined( 'WP_CACHE' ) && true === WP_CACHE ) {
-				set_transient( 'cptch_time', $time, 120 );
-			} 
+				$key = 'cptch_time_' . md5( $value_encode );
+				set_transient( $key, $time, $cptch_options['forms']['general']['time_limit'] );
+			}
 		}
 
 		return $time_limit_notice .
@@ -2075,12 +2081,14 @@ if ( ! function_exists( 'cptch_limit_exhausted' ) ) {
 		if ( empty( $cptch_options ) ) {
 			cptch_settings();
 		}
-		if ( true === $cptch_options['forms']['general']['enable_session'] && isset( $_SESSION[ $form_slug . '_cptch_time' ] ) && true !== $cptch_options['load_via_ajax'] ) {
+		if ( true === $cptch_options['forms']['general']['enable_session'] && isset( $_SESSION[ $form_slug . '_cptch_time' ] ) && true !== $cptch_options['load_via_ajax'] && 1 == $cptch_options['forms']['general']['enable_time_limit'] ) {
 			$cptch_time = sanitize_text_field( wp_unslash( $_SESSION[ $form_slug . '_cptch_time' ] ) );
-		} else {
-			if ( defined( 'WP_CACHE' ) && true === WP_CACHE ) {
-				$cptch_time = get_transient( 'cptch_time' );
-				set_transient( 'cptch_time', '', 1 );
+		} elseif ( 1 == $cptch_options['forms']['general']['enable_time_limit'] ) {
+			if ( defined( 'WP_CACHE' ) && true === WP_CACHE && 'slide' !== $cptch_options['type'] ) {
+				$cptch_result = isset( $_REQUEST['cptch_result'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cptch_result'] ) ) : null;
+				$key = 'cptch_time_' . md5( $cptch_result );
+				$cptch_time = get_transient( $key );
+				delete_transient( $key );
 				if ( false === $cptch_time ) {					
 					return false;
 				}
